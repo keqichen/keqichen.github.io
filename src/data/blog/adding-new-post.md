@@ -1,13 +1,13 @@
 ---
-author: Sat Naing
+author: Keqi Chen
 pubDatetime: 2022-09-23T15:22:00Z
 modDatetime: 2025-06-13T16:52:45.934Z
-title: Adding new posts in AstroPaper theme
+title: "'VirtualizedLists should never be nested inside plain ScrollViews with the same orientation' Error in React Native"
 slug: adding-new-posts-in-astropaper-theme
 featured: true
 draft: false
 tags:
-  - docs
+  - ReactNative
 description:
   Some rules & recommendations for creating or adding new posts using AstroPaperr
   theme.

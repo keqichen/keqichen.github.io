@@ -3,35 +3,17 @@ layout: ../layouts/AboutLayout.astro
 title: "About"
 ---
 
-AstroPaper is a minimal, accessible and SEO-friendly blog theme built with [Astro](https://astro.build/) and [Tailwind CSS](https://tailwindcss.com/).
+Hi, I’m Keqi — a philosopher-turned front-end engineer. 
 
-![Astro Paper](public/astropaper-og.jpg)
+In the early stage of my life, I devoted myself to medieval philosophy in a quiet English town, exploring semantics, metaphysics, and ethics (My PhD thesis is open access [here](https://www.repository.cam.ac.uk/items/1d9cdce9-5cef-4cea-a27f-25365fb35e3f)). I came to know the beauty and the limits of pure thought. Unlike Plato’s cave, where one ascends from shadows to ideals, I took the reverse journey — leaving the realm of ideals to return to the weight of the tangible world.
 
-AstroPaper provides a solid foundation for blogs, or even portfolios\_ with full markdown support, built-in dark mode, and a clean layout that works out-of-the-box.
+That turn brought me to tech. Philosophy still shapes how I think, but I wanted its answers to touch real people. So I taught myself Python and JavaScript, and quickly recognized a familiar pattern: start from first principles, structure the problem, reason carefully, then build systems. The difference is that in code, the idea doesn’t just stay on the page; it runs in the world.
 
-The blog posts in this theme also serve as guides, docs or example articles\_ making AstroPaper a flexible starting point for your next content-driven site.
+<!-- ![Astro Paper](public/astropaper-og.jpg) -->
 
-## Features
+Today I work at Acre in London, building a CRM platform that simplifies the mortgage process. I thrive on transforming complex data relationships into intuitive user journeys with React/TypeScript and GraphQL, making sure architecture remains clean while user journeys stay intuitive.
 
-AstroPaper comes with a set of useful features that make content publishing easy and effective:
+Outside work, I experiment with UE5 for game development and React Native for mobile apps. When I'm not coding, you'll find me painting, bouldering or gaming.
 
-- SEO-friendly
-- Fast performance
-- Light & dark mode
-- Highly customizable
-- Organizable blog posts
-- Responsive & accessible
-- Static search with [PageFind](https://pagefind.app/)
-- Automatic social image generation
+Feel free to reach out if you’d like to collaborate or chat.
 
-and so much more.
-
-## Show your support
-
-If you like [AstroPaper](https://github.com/satnaing/astro-paper), consider giving it a star ⭐️.
-
-Found a bug 🐛 or have an improvement ✨ in mind? Feel free to open an [issue](https://github.com/satnaing/astro-paper/issues), submit a [pull request](https://github.com/satnaing/astro-paper/pulls) or start a [discussion](https://github.com/satnaing/astro-paper/discussions).
-
-If you find this theme helpful, you can also [sponsor me on GitHub](https://github.com/sponsors/satnaing) or [buy me a coffee](https://buymeacoffee.com/satnaing) to show your support — every penny counts.
-
-Kyay zuu! 🙏🏼
