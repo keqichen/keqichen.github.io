@@ -9,28 +9,46 @@ export interface Props extends CollectionEntry<"blog"> {
 }
 
 const { variant = "h2", data, id, filePath } = Astro.props;
-
 const { title, description, pubDatetime, modDatetime, timezone } = data;
 
-const headerProps = {
-  style: { viewTransitionName: slugifyStr(title) },
-  class: "text-lg font-medium decoration-dashed hover:underline",
-};
+const titleClasses =
+  "text-lg font-semibold tracking-tight";
+
+const headerStyle = { viewTransitionName: slugifyStr(title) };
+
+const cardClasses =
+  "group/card relative block rounded-2xl border border-zinc-200/60 dark:border-white/10 " +
+  "bg-white dark:bg-zinc-900 shadow-sm transition-all duration-200 " +
+  "hover:-translate-y-0.5 hover:shadow-md " +
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50";
 ---
 
 <li class="my-6">
-  <a
-    href={getPath(id, filePath)}
-    class="inline-block text-lg font-medium text-accent decoration-dashed underline-offset-4 focus-visible:no-underline focus-visible:underline-offset-0"
-  >
-    {
-      variant === "h2" ? (
-        <h2 {...headerProps}>{title}</h2>
-      ) : (
-        <h3 {...headerProps}>{title}</h3>
-      )
-    }
+  <a href={getPath(id, filePath)} class={cardClasses}>
+    <div class="p-5">
+      {
+        variant === "h2" ? (
+          <h2 style={headerStyle} class={titleClasses}>{title}</h2>
+        ) : (
+          <h3 style={headerStyle} class={titleClasses}>{title}</h3>
+        )
+      }
+
+      <div class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+        <Datetime {pubDatetime} {modDatetime} {timezone} />
+      </div>
+
+      <p class="mt-2 text-zinc-700 dark:text-zinc-300">
+        {description}
+      </p>
+    </div>
+
+    {/* optional soft hover glow */}
+    <span
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-0 rounded-2xl transition-opacity duration-200
+             opacity-0 group-hover/card:opacity-100
+             bg-gradient-to-br from-accent/5 via-transparent to-transparent"
+    />
   </a>
-  <Datetime {pubDatetime} {modDatetime} {timezone} />
-  <p>{description}</p>
 </li>

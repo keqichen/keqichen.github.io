@@ -1,9 +1,10 @@
 export const SITE = {
   website: "https://keqichen.github.io", 
   author: "Keqi Chen",
+  authorEmail: "ckq009@gmail.com",
   profile: "https://github.com/keqichen",
   desc: "A minimal, responsive and SEO-friendly Astro blog theme.",
-  title: "Home",
+  title: "Keqi's Log",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,
   postPerIndex: 4,
@@ -12,7 +13,7 @@ export const SITE = {
   showArchives: true,
   showBackButton: true, // show back button in post detail
   editPost: {
-    enabled: true,
+    enabled: false,
     text: "Edit page",
     url: "https://github.com/keqichen/technical_blog/edit/main/", // ALSO UPDATE this to correct repo
   },

@@ -1,0 +1,74 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Socials from "@/components/Socials.astro";
+import Card from "@/components/Card.astro";
+import Hr from "@/components/Hr.astro";
+import Pagination from "@/components/Pagination.astro";
+import getSortedPosts from "@/utils/getSortedPosts";
+import { SITE } from "@/config";
+import { SOCIALS } from "@/constants";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  return paginate(getSortedPosts(posts), { pageSize: SITE.postPerPage });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+
+<Layout>
+  <Header />
+  <main id="main-content" data-layout="index">
+    {/* Show hero section only on first page */}
+    {page?.currentPage === 1 && (
+      <>
+        <section id="hero" class="pt-8 pb-6">
+          <h1 class="my-4 inline-block text-4xl font-bold sm:my-8 sm:text-5xl">
+            👋 Welcome!
+          </h1>
+         
+
+          <p>
+            Hi, this is Keqi. I'm writing about React, GraphQL, algorithms, and the art of building with curiosity.      
+          </p>
+          {
+            // only display if at least one social link is enabled
+            SOCIALS.length > 0 && (
+              <div class="mt-4 flex flex-col sm:flex-row sm:items-center">
+                <Socials />
+              </div>
+            )
+          }
+        </section>
+
+        <Hr />
+      </>
+    )}
+
+    {/* All posts section */}
+    <section id="posts" class="pt-0 pb-6">
+      <ul>
+        {page.data.map(post => <Card {...post} />)}
+      </ul>
+    </section>
+
+    {/* Pagination */}
+    <Pagination {page} />
+  </main>
+  
+  <Footer noMarginTop={page.lastPage > 1} />
+</Layout>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const indexLayout = (document.querySelector("#main-content") as HTMLElement)
+      ?.dataset?.layout;
+    if (indexLayout) {
+      sessionStorage.setItem("backUrl", "/");
+    }
+  });
+</script>
