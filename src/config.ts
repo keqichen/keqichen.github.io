@@ -1,7 +1,7 @@
 export const SITE = {
-  website: "https://astro-paper.pages.dev/", // replace this with your deployed domain
+  website: "https://keqichen.github.io", 
   author: "Keqi Chen",
-  profile: "https://satnaing.dev/",
+  profile: "https://github.com/keqichen",
   desc: "A minimal, responsive and SEO-friendly Astro blog theme.",
   title: "Home",
   ogImage: "astropaper-og.jpg",
@@ -14,10 +14,10 @@ export const SITE = {
   editPost: {
     enabled: true,
     text: "Edit page",
-    url: "https://github.com/satnaing/astro-paper/edit/main/",
+    url: "https://github.com/keqichen/technical_blog/edit/main/", // ALSO UPDATE this to correct repo
   },
   dynamicOgImage: true,
   dir: "ltr", // "rtl" | "auto"
   lang: "en", // html lang code. Set this empty and default will be "en"
-  timezone: "Europe/London", // Default global timezone (IANA format) https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  timezone: "Europe/London", // Default global timezone (IANA format)
 } as const;
