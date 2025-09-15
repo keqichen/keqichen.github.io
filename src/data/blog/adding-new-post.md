@@ -1,21 +1,22 @@
 ---
 author: Keqi Chen
-pubDatetime: 2022-09-23T15:22:00Z
-modDatetime: 2025-06-13T16:52:45.934Z
-title: "'VirtualizedLists should never be nested inside plain ScrollViews with the same orientation' Error in React Native"
-slug: adding-new-posts-in-astropaper-theme
+pubDatetime: 2025-09-15T21:40:00Z
+modDatetime: 2025-09-15T21:40:00Z
+title: Rethinking the 'VirtualizedLists should never be nested inside plain ScrollViews with the same orientation' Error in React Native
+slug: virtualisedlists-error-in-react-native
 featured: true
 draft: false
 tags:
   - ReactNative
 description:
-  Some rules & recommendations for creating or adding new posts using AstroPaperr
-  theme.
+  The 'VirtualizedLists should never be nested inside plain ScrollViews with the same orientation' warning is common in React Native. You’ll see several workarounds online, but some cases do require rethinking the layout. 
 ---
 
-Here are some rules/recommendations, tips & ticks for creating new posts in AstroPaper blog theme.
+The `VirtualizedLists should never be nested inside plain ScrollViews with the same orientation` error is common in React Native. There are several workarounds online, but some cases do require rethinking the layout. 
 
-<figure>
+In this article, I'll examine the root cause, review common technical fixes, and explain when the best solution is redesigning your layout - such as placing FlatLists within non-scrollable containers like popups or modals rather than within scrollable parent views.
+
+<!-- <figure>
   <img
     src="https://images.pexels.com/photos/159618/still-life-school-retro-ink-159618.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
     alt="Free Classic wooden desk with writing materials, vintage clock, and a leather bag. Stock Photo"
@@ -23,227 +24,176 @@ Here are some rules/recommendations, tips & ticks for creating new posts in Astr
     <figcaption class="text-center">
     Photo by <a href="https://www.pexels.com/photo/brown-wooden-desk-159618/">Pixabay</a>
   </figcaption>
-</figure>
+</figure> -->
 
 ## Table of contents
 
-## Creating a Blog Post
+## What is a VirtualizedList?
+A **VirtualizedList** is an optimised list component that renders only what’s visible (a technique known as *virtualisation*/*windowing*). This keeps memory usage low and scrolling smooth for large datasets.
 
-To write a new blog post, create a markdown file inside the `src/data/blog/` directory.
+- `FlatList` and `SectionList` are both built on **VirtualizedList**.  
+- `ScrollView` is a simple container that **renders all children at once**.
 
-> Prior to AstroPaper v5.1.0, all blog posts had to be in `src/data/blog/`, meaning you couldn't organize them into subdirectories.
+In practice, you’ll get far less delay for long lists with `FlatList`/`SectionList` than with `ScrollView`.
 
-Starting from AstroPaper v5.1.0, you can now organize blog posts into subdirectories, making it easier to manage your content.
+## When will you see this error?
+This error fires when a **VirtualizedList** (`FlatList` / `SectionList`) is nested inside another scroller with the **same scroll direction** — typically a parent `ScrollView` or another `VirtualizedList`.  
 
-For example, if you want to group posts under `2025`, you can place them in `src/data/blog/2025/`. This also affects the post URL, so `src/data/blog/2025/example-post.md` will be available at `/posts/2025/example-post`.
+Different orientations are fine (e.g., a **vertical** list whose items contain **horizontal** carousels).
 
-If you don’t want subdirectories to affect the post URL, just prefix the folder name with an underscore `_`.
+## Why does this error occur?
+When same-orientation scrollers are nested:
 
-```bash
-# Example: blog post structure and URLs
-src/data/blog/very-first-post.md          -> mysite.com/posts/very-first-post
-src/data/blog/2025/example-post.md        -> mysite.com/posts/2025/example-post
-src/data/blog/_2026/another-post.md       -> mysite.com/posts/another-post
-src/data/blog/docs/_legacy/how-to.md      -> mysite.com/posts/docs/how-to
-src/data/blog/Example Dir/Dummy Post.md   -> mysite.com/posts/example-dir/dummy-post
+- **Gesture/scroll ownership conflicts:** The framework can’t reliably decide whether the **parent** or the **child** should handle scroll/touch events, causing flaky interactions or unresponsive UIs.  
+- **Competing viewport maths:** Both containers attempt their own layout/visibility calculations, which can lead to jank, extra memory pressure, and rendering glitches.
+
+## Common Technical Solutions
+
+### 1) Suppress the warning (dev-only)
+Use `LogBox.ignoreLogs()` (or legacy `YellowBox.ignoreWarnings()`) to hide the message.  
+**Note:** This will just quiet dev console but **does not** fix the actual problem. I would not recommend this in prod.
+
+```ts
+// RN ≥ 0.63
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs([
+  'VirtualizedLists should never be nested inside plain ScrollViews with the same orientation',
+]);
+
+// RN < 0.63 (deprecated)
+import { YellowBox } from 'react-native';
+YellowBox.ignoreWarnings([
+  'VirtualizedLists should never be nested inside plain ScrollViews with the same orientation',
+]);
 ```
 
-> 💡 Tip: You can override a blog post’s slug in the frontmatter as well. See the next section for more details.
+### 2) Enable nested scrolling
+**Android:** You can sometimes get away with setting `nestedScrollEnabled` on **both** the parent and the child. But some edge cases might still be broken.
 
-If the subdirectory URL doesn’t appear in the build output, remove node_modules, reinstall packages, and then rebuild.
-
-## Frontmatter
-
-Frontmatter is the main place to store some important information about the blog post (article). Frontmatter lies at the top of the article and is written in YAML format. Read more about frontmatter and its usage in [astro documentation](https://docs.astro.build/en/guides/markdown-content/).
-
-Here is the list of frontmatter property for each post.
-
-| Property           | Description                                                                                                                           | Remark                                         |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| **_title_**        | Title of the post. (h1)                                                                                                               | required<sup>\*</sup>                          |
-| **_description_**  | Description of the post. Used in post excerpt and site description of the post.                                                       | required<sup>\*</sup>                          |
-| **_pubDatetime_**  | Published datetime in ISO 8601 format.                                                                                                | required<sup>\*</sup>                          |
-| **_modDatetime_**  | Modified datetime in ISO 8601 format. (only add this property when a blog post is modified)                                           | optional                                       |
-| **_author_**       | Author of the post.                                                                                                                   | default = SITE.author                          |
-| **_slug_**         | Slug for the post. This field is optional.                                                                                            | default = slugified file name                  |
-| **_featured_**     | Whether or not display this post in featured section of home page                                                                     | default = false                                |
-| **_draft_**        | Mark this post 'unpublished'.                                                                                                         | default = false                                |
-| **_tags_**         | Related keywords for this post. Written in array yaml format.                                                                         | default = others                               |
-| **_ogImage_**      | OG image of the post. Useful for social media sharing and SEO. This can be a remote URL or an image path relative to current folder.  | default = `SITE.ogImage` or generated OG image |
-| **_canonicalURL_** | Canonical URL (absolute), in case the article already exists on other source.                                                         | default = `Astro.site` + `Astro.url.pathname`  |
-| **_hideEditPost_** | Hide editPost button under blog title. This applies only to the current blog post.                                                    | default = false                                |
-| **_timezone_**     | Specify a timezone in IANA format for the current blog post. This will override the `SITE.timezone` config for the current blog post. | default = `SITE.timezone`                      |
-
-> Tip! You can get ISO 8601 datetime by running `new Date().toISOString()` in the console. Make sure you remove quotes though.
-
-Only `title`, `description` and `pubDatetime` fields in frontmatter must be specified.
-
-Title and description (excerpt) are important for search engine optimization (SEO) and thus AstroPaper encourages to include these in blog posts.
-
-`slug` is the unique identifier of the url. Thus, `slug` must be unique and different from other posts. The whitespace of `slug` should to be separated with `-` or `_` but `-` is recommended. Slug is automatically generated using the blog post file name. However, you can define your `slug` as a frontmatter in your blog post.
-
-For example, if the blog file name is `adding-new-post.md` and you don't specify the slug in your frontmatter, Astro will automatically create a slug for the blog post using the file name. Thus, the slug will be `adding-new-post`. But if you specify the `slug` in the frontmatter, this will override the default slug. You can read more about this in [Astro Docs](https://docs.astro.build/en/guides/content-collections/#defining-custom-slugs).
-
-If you omit `tags` in a blog post (in other words, if no tag is specified), the default tag `others` will be used as a tag for that post. You can set the default tag in the `content.config.ts` file.
-
-```ts file="src/content.config.ts"
-export const blogSchema = z.object({
-  // ...
-  draft: z.boolean().optional(),
-  // [!code highlight:1]
-  tags: z.array(z.string()).default(["others"]), // replace "others" with whatever you want
-  // ...
-});
+```ts
+<ScrollView nestedScrollEnabled>
+  <FlatList
+    nestedScrollEnabled
+    data={data}
+    keyExtractor={(x) => x.id}
+    renderItem={renderItem}
+  />
+</ScrollView>
 ```
 
-### Sample Frontmatter
+**iOS:** This is unreliable for same-direction nesting. Two common tips you’ll see online are:
 
-Here is the sample frontmatter for a post.
+- **Set `scrollEnabled={false}` on the child** — this removes the warning but also removes the child’s ability to scroll (not useful).
 
-```yaml file="src/data/blog/sample-post.md"
----
-title: The title of the post
-author: your name
-pubDatetime: 2022-09-21T05:17:19Z
-slug: the-title-of-the-post
-featured: true
-draft: false
-tags:
-  - some
-  - example
-  - tags
-ogImage: ../../assets/images/example.png # src/assets/images/example.png
-# ogImage: "https://example.org/remote-image.png" # remote URL
-description: This is the example description of the example post.
-canonicalURL: https://example.org/my-article-was-already-posted-here
----
-```
+- **Change the child’s scroll direction** — this avoids the conflict, but it changes the UX (might be fine if a horizontal carousel makes sense).
 
-## Adding table of contents
+### 3) Refactor using `FlatList` / `SectionList` props (recommended)
 
-By default, a post (article) does not include any table of contents (toc). To include toc, you have to specify it in a specific way.
+Refactor the tab so there’s one vertical owner. Put “parent” UI in `ListHeaderComponent`/`ListFooterComponent`, and render any “nested” content inside items (ideally as **horizontal** carousels).  
 
-Write `Table of contents` in h2 format (## in markdown) and place it where you want it to be appeared on the post.
+This is the cleanest, most stable technical approach. But still, this pattern **does not** support two independent **vertical** scrollers on the same screen. 
 
-For instance, if you want to place your table of contents just under the intro paragraph (like I usually do), you can do that in the following way.
+<details>
 
-<!-- prettier-ignore-start -->
-```md
----
-# frontmatter
----
+<summary><strong>Toggle here to see an Example flow</strong></summary>
 
-Here are some recommendations, tips & ticks for creating new posts in AstroPaper blog theme.
+- Header (filters / actions) lives in `ListHeaderComponent`.
+- “Complete” opens a **modal** (no background scroll).
+- On confirm, we **push a banner** by toggling a **footer** (no extra scroller).
+- Items can contain **horizontal** carousels.
 
-<!-- [!code ++] -->
-## Table of contents
+```tsx
+import React, { useState } from 'react';
+import { FlatList, View, Text, Button, Modal } from 'react-native';
 
-<!-- the rest of the post -->
-```
-<!-- prettier-ignore-end -->
+type Row = { id: string; photos: { id: string }[] };
 
-## Headings
+export default function Screen({ data }: { data: Row[] }) {
+  const [showCompleteModal, setShowCompleteModal] = useState(false);
+  const [showBottomBanner, setShowBottomBanner] = useState(false);
 
-There's one thing to note about headings. The AstroPaper blog posts use title (title in the frontmatter) as the main heading of the post. Therefore, the rest of the heading in the post should be using h2 \~ h6.
+  // Header: controls (tabs/filters + action)
+  const Header = (
+    <View>
+      <Text>Filters / Tabs</Text>
+      <Button title="Complete" onPress={() => setShowCompleteModal(true)} />
+    </View>
+  );
 
-This rule is not mandatory, but highly recommended for visual, accessibility and SEO purposes.
+  // Footer: bottom banner (shown after confirm)
+  const Footer = showBottomBanner ? (
+    <View>
+      <Text>Action applied</Text>
+      <Text>Your changes have been saved.</Text>
+    </View>
+  ) : null;
 
-## Syntax Highlighting
+  // Item: vertical list rows, each may contain a horizontal carousel
+  const renderItem = ({ item }: { item: Row }) => (
+    <View>
+      <Text>Section {item.id}</Text>
+      <FlatList
+        horizontal
+        data={item.photos}
+        keyExtractor={(p) => p.id}
+        renderItem={({ item: p }) => (
+          <View>
+            <Text>Photo {p.id}</Text>
+          </View>
+        )}
+      />
+    </View>
+  );
 
-AstroPaper uses [Shiki](https://shiki.style/) as the default syntax highlighting. Starting from AstroPaper v5.4, [@shikijs/transformers](https://shiki.style/packages/transformers) is used to enhance better fenced code blocks. If you don't want to use it, you can simply remove it like this
+  return (
+    <>
+      <FlatList
+        data={data}
+        keyExtractor={(x) => x.id}
+        renderItem={renderItem}
+        ListHeaderComponent={Header}   // header controls
+        ListFooterComponent={Footer}   // bottom banner
+        stickyHeaderIndices={[0]}      // keep header pinned
+      />
 
-```bash
-pnpm remove @shikijs/transformers
-```
-
-```js file="astro.config.ts"
-// ...
-// [!code --:5]
-import {
-  transformerNotationDiff,
-  transformerNotationHighlight,
-  transformerNotationWordHighlight,
-} from "@shikijs/transformers";
-
-export default defineConfig({
-  // ...
-  markdown: {
-    remarkPlugins: [remarkToc, [remarkCollapse, { test: "Table of contents" }]],
-    shikiConfig: {
-      // For more themes, visit https://shiki.style/themes
-      themes: { light: "min-light", dark: "night-owl" },
-      defaultColor: false,
-      wrap: false,
-      transformers: [
-        transformerFileName(),
-      // [!code --:3]
-        transformerNotationHighlight(),
-        transformerNotationWordHighlight(),
-        transformerNotationDiff({ matchAlgorithm: "v3" }),
-      ],
-    },
-  },
-  // ...
+      {/* Modal: confirm action, then show banner */}
+      <Modal
+        visible={showCompleteModal}
+        transparent
+        onRequestClose={() => setShowCompleteModal(false)}
+      >
+        <View>
+          <Text>Confirm action?</Text>
+          <Button
+            title="Confirm"
+            onPress={() => {
+              setShowCompleteModal(false);
+              setShowBottomBanner(true);
+            }}
+          />
+          <Button title="Cancel" onPress={() => setShowCompleteModal(false)} />
+        </View>
+      </Modal>
+    </>
+  );
 }
 ```
+</details>
 
-## Storing Images for Blog Content
+## Rethinking the UI/UX
+Now if your UX truly needs nested vertical scrolling, what you need to do is to move the heavy scrolling UI into a **modal** or **bottom sheet** (popup):
 
-Here are two methods for storing images and displaying them inside a markdown file.
+![Scrolling feature](scrolling-feature.jpg)
 
-> Note! If it's a requirement to style optimized images in markdown you should [use MDX](https://docs.astro.build/en/guides/images/#images-in-mdx-files).
+This isolated gesture is common in production apps because it prevents nested-scroll issues and keeps the main screen simple.
 
-### Inside `src/assets/` directory (recommended)
+## Conclusion
+- If the interaction is complex or full-screen in feel (long lists, paginated results, pickers), use a dedicated **popup/bottom sheet**.
+- If it belongs inline, let a single `FlatList` own vertical scrolling, and restructure around headers/footers rather than adding a parent `ScrollView`.
 
-You can store images inside `src/assets/` directory. These images will be automatically optimized by Astro through [Image Service API](https://docs.astro.build/en/reference/image-service-reference/).
+Design choices matter more than we often realise. Sometimes a small change to the interaction eliminates complex workarounds and delivers smoother performance. I came across this problem when working on a side project, and the important lesson I learnt as a developer is, the best 'performance optimisation' does not always lie in the clever code, but could just be a clearer flow.
 
-You can use relative path or alias path (`@/assets/`) to serve these images.
-
-Example: Suppose you want to display `example.jpg` whose path is `/src/assets/images/example.jpg`.
-
-```md
-![something](@/assets/images/example.jpg)
-
-<!-- OR -->
-
-![something](../../assets/images/example.jpg)
-
-<!-- Using img tag or Image component won't work ❌ -->
-<img src="@/assets/images/example.jpg" alt="something">
-<!-- ^^ This is wrong -->
-```
-
-> Technically, you can store images inside any directory under `src`. In here, `src/assets` is just a recommendation.
-
-### Inside `public` directory
-
-You can store images inside the `public` directory. Keep in mind that images stored in the `public` directory remain untouched by Astro, meaning they will be unoptimized and you need to handle image optimization by yourself.
-
-For these images, you should use an absolute path; and these images can be displayed using [markdown annotation](https://www.markdownguide.org/basic-syntax/#images-1) or [HTML img tag](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img).
-
-Example: Assume `example.jpg` is located at `/public/assets/images/example.jpg`.
-
-```md
-![something](/assets/images/example.jpg)
-
-<!-- OR -->
-
-<img src="/assets/images/example.jpg" alt="something">
-```
-
-## Bonus
-
-### Image compression
-
-When you put images in the blog post (especially for images under `public` directory), it is recommended that the image is compressed. This will affect the overall performance of the website.
-
-My recommendation for image compression sites.
-
-- [TinyPng](https://tinypng.com/)
-- [TinyJPG](https://tinyjpg.com/)
-
-### OG Image
-
-The default OG image will be placed if a post does not specify the OG image. Though not required, OG image related to the post should be specify in the frontmatter. The recommended size for OG image is **_1200 X 640_** px.
-
-> Since AstroPaper v1.4.0, OG images will be generated automatically if not specified. Check out [the announcement](https://astro-paper.pages.dev/posts/dynamic-og-image-generation-in-astropaper-blog-posts/).
+## Useful References
+- [React Native FlatList Documentation](https://reactnative.dev/docs/flatlist)
+- [GitHub Issue #31697 - Discussion on VirtualizedList nesting](https://github.com/facebook/react-native/issues/31697#issuecomment-920142002)
+- [Medium Article - Solving VirtualizedLists Nesting Error in React Native](https://medium.com/@sivasothytharsa17/solving-the-virtualizedlists-should-never-be-nested-inside-plain-scrollviews-error-in-react-fbd3cb4daeed)
