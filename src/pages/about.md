@@ -15,5 +15,5 @@ Today I work at a FinTech scale-up in London, building a CRM platform that simpl
 
 Outside work, I experiment with UE5 for game development and React Native for mobile apps. When I'm not coding, you'll find me painting, bouldering or gaming.
 
-Feel free to reach out if you’d like to collaborate or chat.
+I love working with people who truly care about their craft and bring passion to what they build. Feel free to reach out if you'd like to collaborate or chat — and if you notice anything I could improve in a post, please tell me :)
 
