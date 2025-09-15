@@ -9,7 +9,7 @@ draft: false
 tags:
   - ReactNative
 description:
-  The 'VirtualizedLists should never be nested inside plain ScrollViews with the same orientation' warning is common in React Native. You’ll see several workarounds online, but some cases do require rethinking the layout. 
+  The above warning is common in React Native. In this article, I'll examine the root cause, review common technical fixes, and explain when the best solution is redesigning your layout. 
 ---
 
 The `VirtualizedLists should never be nested inside plain ScrollViews with the same orientation` error is common in React Native. There are several workarounds online, but some cases do require rethinking the layout. 
