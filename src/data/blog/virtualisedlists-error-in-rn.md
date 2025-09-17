@@ -1,7 +1,7 @@
 ---
 author: Keqi Chen
 pubDatetime: 2025-09-15T21:40:00Z
-modDatetime: 2025-09-15T21:40:00Z
+modDatetime: 2025-09-18T00:16:00Z
 title: Rethinking the 'VirtualizedLists should never be nested inside plain ScrollViews with the same orientation' Error in React Native
 slug: virtualisedlists-error-in-react-native
 featured: true
@@ -9,12 +9,12 @@ draft: false
 tags:
   - ReactNative
 description:
-  The above warning is common in React Native. In this article, I'll examine the root cause, review common technical fixes, and explain when the best solution is redesigning your layout. 
+  The above warning is common in React Native. In this article, I'll examine the root cause, review common technical fixes, and explain when the best solution is redesigning your layout, or consider non-JS based libraries. 
 ---
 
 The `VirtualizedLists should never be nested inside plain ScrollViews with the same orientation` error is common in React Native. There are several workarounds online, but some cases do require rethinking the layout. 
 
-In this article, I'll examine the root cause, review common technical fixes, and explain when the best solution is redesigning your layout - such as placing FlatLists within non-scrollable containers like popups or modals rather than within scrollable parent views.
+In this article, I'll examine the root cause, review common technical fixes, and explain when the best solution is redesigning your layout, or consider non-JS based libraries.
 
 <!-- <figure>
   <img
@@ -180,20 +180,32 @@ export default function Screen({ data }: { data: Row[] }) {
 ```
 </details>
 
-## Rethinking the UI/UX
-Now if your UX truly needs nested vertical scrolling, what you need to do is to move the heavy scrolling UI into a **modal** or **bottom sheet** (popup):
+## Solutions I recommend
+### 1) Rethink the UI/UX
+If your screen needs same-axis nested scrolling (e.g., a wheel-style picker inside a vertically scrollable page), first ask whether the interaction makes sense in the primary flow. If it’s secondary, transient, or requires focused attention, move it into a **modal** or **bottom** sheet:
 
 ![Scrolling feature](scrolling-feature.jpg)
 
-This isolated gesture is common in production apps because it prevents nested-scroll issues and keeps the main screen simple.
+Doing this keeps the primary journey clean (single scroll context) and avoids nested-scroll conflicts.
+
+### 2) Use native pickers or high-performance lists (not VirtualizedList)
+For platform-authentic UX (like the iOS alarm-clock wheel), consider native picker libraries over DIY JS lists (e.g., `@react-native-picker/picker`, `@react-native-community/datetimepicker`, or a wheel picker).You’ll get OS-level haptics, accessibility semantics, and scrolling physics out of the box.
+
+If you need a customisable, large/complex list, consider `@shopify/flash-list`. It’s a ground-up list that uses cell recycling and precise measurement to reduce mounts and memory. Because it is not built on `VirtualizedList`, you can avoid that specific RN warning. With stable item sizes (set estimatedItemSize) and consistent keys, it often outperforms FlatList.
 
 ## Conclusion
-- If the interaction is complex or full-screen in feel (long lists, paginated results, pickers), use a dedicated **popup/bottom sheet**.
-- If it belongs inline, let a single `FlatList` own vertical scrolling, and restructure around headers/footers rather than adding a parent `ScrollView`.
 
-Design choices matter more than we often realise. Sometimes a small change to the interaction eliminates complex workarounds and delivers smoother performance. I came across this problem when working on a side project, and the important lesson I learnt as a developer is, the best 'performance optimisation' does not always lie in the clever code, but could just be a clearer flow.
+- **If the interaction feels complex**, it likely belongs in its own **modal or bottom sheet**. This keeps the primary journey clean and avoids same-axis nested scrolling.
 
-## Useful References
+- **If it truly belongs inline**, let a single `FlatList` **own vertical scrolling**. Restructure content into `ListHeaderComponent` / `ListFooterComponent` instead of wrapping with a parent `ScrollView`. If performance is a concern, consider **`@shopify/flash-list`** (a ground-up list not built on RN’s `VirtualizedList`) or a **native picker** for platform-authentic interactions.
+
+Start with the flow, then let the architecture reflect it. 
+
+## Useful Links
 - [React Native FlatList Documentation](https://reactnative.dev/docs/flatlist)
 - [GitHub Issue #31697 - Discussion on VirtualizedList nesting](https://github.com/facebook/react-native/issues/31697#issuecomment-920142002)
 - [Medium Article - Solving VirtualizedLists Nesting Error in React Native](https://medium.com/@sivasothytharsa17/solving-the-virtualizedlists-should-never-be-nested-inside-plain-scrollviews-error-in-react-fbd3cb4daeed)
+- [FlashList Docs – Usage](https://shopify.github.io/flash-list/docs/usage/)
+- [FlashList v2 — Shopify Engineering (design goals & perf)](https://shopify.engineering/flashlist-v2)
+- [Apple Human Interface Guidelines: Pickers](https://developer.apple.com/design/human-interface-guidelines/pickers)
+- [Material Design 3: Bottom sheets (guidelines)](https://m3.material.io/components/bottom-sheets/guidelines)
