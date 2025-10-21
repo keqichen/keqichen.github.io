@@ -11,9 +11,9 @@ Early on I was drawn to the humanities and devoted myself to medieval philosophy
 
 So I taught myself Python and JavaScript, and quickly recognised a familiar pattern: start from first principles, frame the problem, reason rigorously, then build the system. The difference is that in code, the idea doesn’t just stay on the page; it runs in the world.
 
-Today I work at a FinTech scale-up in London, building a CRM platform that simplifies the mortgage process. I enjoy transforming complex data relationships into intuitive user journeys with React/TypeScript and GraphQL, ensuring clean architecture alongside seamless user experiences.
+Today I work at a FinTech scale-up in London, building a CRM platform that simplifies the mortgage process. I specialise in React/TypeScript, GraphQL and Apollo, with a particular passion for performance optimisation and system design. I care deeply about delivering high-quality, scalable solutions that transform complex data relationships into intuitive user journeys.
 
 Outside work, I experiment with UE5 for game development and React Native for mobile apps. When I'm not coding, you'll find me painting, bouldering or gaming.
 
-I love working with people who truly care about their craft and bring passion to what they build. Feel free to reach out if you'd like to collaborate or chat — and if you notice anything I could improve in a post, please tell me :)
+I love working with people who take their commitments seriously and bring passion to what they build. Feel free to reach out if you'd like to collaborate or chat — and if you notice anything I could improve in a post, please tell me :)
 
