@@ -17,9 +17,9 @@ I often hear: **“Why are we doing LeetCode in a frontend interview?”** It’
 
 Consider two simple examples: 
 
-> **Example one**: Linked lists have O(1) prepend while arrays have O(n). Yet arrays completely dominate React development. Why? You can blame JS is a weird language, but it also shows Big-O doesn't capture engine optimisations, ecosystem support, or developer ergonomics.
+- **Example one**: Linked lists have O(1) prepend while arrays have O(n). Yet arrays completely dominate React development. Why? You can blame JS is a weird language, but it also shows Big-O doesn't capture engine optimisations, ecosystem support, or developer ergonomics.
 
-> **Example two**:  `Set.prototype.has` is `O(1)` and `Array.prototype.includes` is `O(n)`; however, we should use the latter for a tiny list or a single check, as the one-time cost of building `new Set(...)` can outweigh any benefit. Big-O ignores constants and lower-order terms, but they become important at **small or moderate** input sizes, which, however, is a common use case in frontend. 
+- **Example two**:  `Set.prototype.has` is `O(1)` and `Array.prototype.includes` is `O(n)`; however, we should use the latter for a tiny list or a single check, as the one-time cost of building `new Set(...)` can outweigh any benefit. Big-O ignores constants and lower-order terms, but they become important at **small or moderate** input sizes, which, however, is a common use case in frontend. 
 
 But this doesn't mean we should toss algorithms and data structures entirely. Understanding these fundamentals — even their limitations — helps recognise patterns, debug performance issues, and understand what's happening under the hood of the tools we use daily.
 
@@ -101,7 +101,7 @@ const a = [1, 2, 3];
 a.push(4); // append at end → amortised O(1)
 a.pop();   // remove last    → O(1)
 ```
-> Why amortised? When capacity is full, the engine grows the backing store and copies elements once; spread over many appends, the average runtime per push stays constant.
+*Why amortised? When capacity is full, the engine grows the backing store and copies elements once; spread over many appends, the average runtime per push stays constant.*
 
 By contrast, in a linked list, appending is O(n) unless you maintain a tail pointer (then it's O(1)).
 
