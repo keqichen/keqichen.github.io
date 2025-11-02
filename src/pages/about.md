@@ -5,7 +5,7 @@ title: "About"
 
 Hi, I’m Keqi — a software engineer in London.
 
-<!-- ![Astro Paper](public/about-profile.jpg) -->
+![Keqi Log](../assets/images/keqi_log.png)
 
 Early on I was drawn to the humanities and devoted myself to medieval philosophy, exploring semantics, metaphysics, and ethics in the 11th century (My PhD thesis is open access [here](https://www.repository.cam.ac.uk/items/1d9cdce9-5cef-4cea-a27f-25365fb35e3f)). Over time I came to know the beauty and the limits of pure thought. Philosophy always nourishes my life and shapes how I think, but I wanted the answers to touch real people. 
 
