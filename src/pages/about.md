@@ -13,7 +13,7 @@ So I taught myself Python and JavaScript, and quickly recognised a familiar patt
 
 Today I work at a FinTech scale-up in London, building a CRM platform that simplifies the mortgage process. I specialise in React/TypeScript, GraphQL and Apollo, with a particular passion for performance optimisation and system design. I care deeply about delivering high-quality, scalable solutions that transform complex data relationships into intuitive user journeys.
 
-Outside work, I experiment with UE5 for game development and React Native for mobile apps. When I'm not coding, you'll find me painting, bouldering or gaming.
+Outside work, I experiment with UE5 for game development and React Native for mobile apps (our app *'Healthnest Blood Pressure'* is live on both iOS and Android if you’d like to check it out!). When I'm not coding, you'll find me painting, bouldering or gaming.
 
 I love working with people who take their commitments seriously and bring passion to what they build. Feel free to reach out if you'd like to collaborate or chat — and if you notice anything I could improve in a post, please tell me :)
 
